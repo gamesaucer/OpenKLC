@@ -1,4 +1,3 @@
-
 module.register('Checksum', function (module = window.DLLUtils) {
   module.Checksum = (function () {
     /**

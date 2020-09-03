@@ -1,6 +1,9 @@
 module.register('Layout', function (module = {}, Utils = window.Utils) {
   window.OKLCUtils = module
 
+  /**
+   * Representation of a keyboard layout
+   */
   module.Layout = class {
     constructor (metadata = {}, attributes = 0) {
       this.metadata = {
@@ -17,6 +20,9 @@ module.register('Layout', function (module = {}, Utils = window.Utils) {
     }
   }
 
+  /**
+   * Representation of a binding between a scancode and a virtual key
+   */
   module.KeyBinding = class {
     constructor (virtualKeyCode, scanCode) {
       this.virtualKeyCode = virtualKeyCode
@@ -24,24 +30,33 @@ module.register('Layout', function (module = {}, Utils = window.Utils) {
     }
   }
 
+  /**
+   * Char table entry for a virtual key
+   */
   module.Char = class {
-    constructor (virtualKey, flags, str) {
+    constructor (virtualKey, flags, ...chars) {
       this.virtualKey = virtualKey
       this.flags = flags
-      this.str = str
+      this.chars = chars
     }
   }
 
+  /**
+   * Ligature table entry for a virtual key
+   */
   module.Ligature = class {
-    constructor (virtualKey, modifierKeys, str) {
+    constructor (virtualKey, modifierKeys, ...chars) {
       this.virtualKey = virtualKey
       this.modifierKeys = modifierKeys
-      this.str = str
+      this.chars = chars
 
-      Utils.Errors.StringLength('Expected text of length %2-%3 but received length %1', str, 1, 4)
+      Utils.Errors.StringLength('Expected text of length %2-%3 but received length %1', chars, 1, 4)
     }
   }
 
+  /**
+   * Dead key table entry
+   */
   module.DeadKey = class {
     constructor (accentChar, baseChar, compositeChar, dead) {
       this.accentChar = accentChar
@@ -54,7 +69,3 @@ module.register('Layout', function (module = {}, Utils = window.Utils) {
     }
   }
 }, ['Utils', 'OKLCUtils'])
-
-/* ;(function () {
-
-})() */
