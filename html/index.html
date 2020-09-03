@@ -5,11 +5,18 @@
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>
   <title>Script Test Page</title>
   <meta name='viewport' content='width=device-width, initial-scale=1'>
-  <script src='./Utils/Utils.js'></script>
-  <script src='./Utils/Errors.js'></script>
-  <script src='./OKLCUtils/OKLCUtils.js'></script>
-  <script src='./OKLCUtils/Layout.js'></script>
-  <script src='./DLLUtils/Checksum.js'></script>
+  <script src='./dependencyMgr.js'></script>
+  <script>
+    module.load([{
+      Utils: [{
+        DLLUtils: [
+          'Checksum'],
+        ExportUtils: [],
+        OKLCUtils: [
+          'Layout']},
+        'Errors']
+    }])
+  </script>
 </head>
 <body>
   
