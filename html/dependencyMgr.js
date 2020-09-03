@@ -1,4 +1,20 @@
 const module = (function () { // eslint-disable-line no-unused-vars
+  /**
+   * Folder
+   * @typedef {Object.<String, FolderContent[]>} Folder
+   */
+
+  /**
+   * Folder contents
+   * @typedef {(Folder|String)} FolderContent
+   */
+
+  /**
+   * Registers a module to be loaded as soon as all its dependencies are met.
+   * @param {String} name - module name
+   * @param {Function} initFn - function that loads the module
+   * @param {String[]} dependencies - list of dependencies
+   */
   function register (name, initFn, dependencies = []) {
     register.queuedModuleList = register.queuedModuleList || {}
     register.loadedModuleList = register.loadedModuleList || []
@@ -43,6 +59,11 @@ const module = (function () { // eslint-disable-line no-unused-vars
     resolveDependencies()
   }
 
+  /**
+   * Loads modules from a file structure.
+   * @param {FolderContent[]} arr - the file structure
+   * @param {String[]} nested - path to the file
+   */
   function load (arr = [], nested = ['.']) {
     arr.forEach(el => {
       if (typeof el === 'string') {
