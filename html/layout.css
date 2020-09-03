@@ -1,0 +1,391 @@
+#previewAspectWrapper {
+  position: relative;
+  width: 100vw;
+  min-width: 800px;
+}
+
+#previewWrapper {
+  position: relative;
+  height: 0;
+  width:100%;
+  padding-top: 30%;
+  background: dimgray;
+  border-radius: 5px;
+}
+
+#editablePreview {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: calc(100% - 10px);
+  height: calc(100% - 10px);
+  display: grid;
+  column-gap: 2px;
+  row-gap: 2px;
+  grid-template-columns: 
+  6.9fr
+  0.6fr 1.1fr 1.8fr
+  3.5fr 0.6fr 1.1fr 1.8fr
+  3.4fr 0.6fr 1.2fr 1.8fr
+  3.2fr 0.8fr 1.2fr 1.7fr
+  3.5fr 0.6fr 1.2fr 1.7fr
+  3.5fr 0.6fr 1.1fr 1.8fr
+  3.5fr 0.5fr 1.2fr 1.7fr
+  3.5fr 0.6fr 1.2fr 1.7fr
+  3.5fr 0.6fr 1.2fr 1.7fr
+  3.5fr 0.7fr 1fr 1.8fr
+  3.5fr 0.5fr 1.2fr 1.7fr
+  3.5fr 0.6fr 1.1fr 1.8fr
+  3.5fr       1.7fr 1.8fr 
+  2.1fr 3.8fr
+  1fr 8fr
+  ;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+}
+
+#editablePreview.type1 {
+  grid-template-areas: 
+    "VK_OEM_8 VK_1 VK_1 VK_1 VK_1 VK_2 VK_2 VK_2 VK_2 VK_3 VK_3 VK_3 VK_3 VK_4 VK_4 VK_4 VK_4 VK_5 VK_5 VK_5 VK_5 VK_6 VK_6 VK_6 VK_6 VK_7 VK_7 VK_7 VK_7 VK_8 VK_8 VK_8 VK_8 VK_9 VK_9 VK_9 VK_9 VK_0 VK_0 VK_0 VK_0 VK_OEM_MINUS VK_OEM_MINUS VK_OEM_MINUS VK_OEM_MINUS VK_OEM_PLUS VK_OEM_PLUS VK_OEM_PLUS VK_OEM_PLUS Backspace Backspace Backspace Backspace . ."
+    "Tab Tab Tab VK_Q VK_Q VK_Q VK_Q VK_W VK_W VK_W VK_W VK_E VK_E VK_E VK_E VK_R VK_R VK_R VK_R VK_T VK_T VK_T VK_T VK_Y VK_Y VK_Y VK_Y VK_U VK_U VK_U VK_U VK_I VK_I VK_I VK_I VK_O VK_O VK_O VK_O VK_P VK_P VK_P VK_P VK_OEM_4 VK_OEM_4 VK_OEM_4 VK_OEM_4 VK_OEM_6 VK_OEM_6 VK_OEM_6 VK_OEM_7 VK_OEM_7 VK_OEM_7 . ."
+    "Caps Caps Caps Caps VK_A VK_A VK_A VK_A VK_S VK_S VK_S VK_S VK_D VK_D VK_D VK_D VK_F VK_F VK_F VK_F VK_G VK_G VK_G VK_G VK_H VK_H VK_H VK_H VK_J VK_J VK_J VK_J VK_K VK_K VK_K VK_K VK_L VK_L VK_L VK_L VK_OEM_1 VK_OEM_1 VK_OEM_1 VK_OEM_1 VK_OEM_3 VK_OEM_3 VK_OEM_3 VK_OEM_3 Enter2 Enter2 Enter2 Enter2 Enter2 . ."
+    "Shift1 Shift1 VK_OEM_5 VK_OEM_5 VK_OEM_5 VK_OEM_5 VK_Z VK_Z VK_Z VK_Z VK_X VK_X VK_X VK_X VK_C VK_C VK_C VK_C VK_V VK_V VK_V VK_V VK_B VK_B VK_B VK_B VK_N VK_N VK_N VK_N VK_M VK_M VK_M VK_M VK_OEM_COMMA VK_OEM_COMMA VK_OEM_COMMA VK_OEM_COMMA VK_OEM_PERIOD VK_OEM_PERIOD VK_OEM_PERIOD VK_OEM_PERIOD VK_OEM_2 VK_OEM_2 VK_OEM_2 VK_OEM_2 Shift2 Shift2 Shift2 Shift2 Shift2 Shift2 Shift2 . ."
+    "Control1 Control1 Control1 . . . . . Alt1 Alt1 Alt1 Alt1 Alt1 Alt1 Alt1 VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE Alt2 Alt2 Alt2 Alt2 Alt2 Alt2 . . . . . Control2 Control2 Control2 . VK_DECIMAL";
+}
+
+#editablePreview.type2 {
+  grid-template-areas: 
+    "VK_OEM_8 VK_1 VK_1 VK_1 VK_1 VK_2 VK_2 VK_2 VK_2 VK_3 VK_3 VK_3 VK_3 VK_4 VK_4 VK_4 VK_4 VK_5 VK_5 VK_5 VK_5 VK_6 VK_6 VK_6 VK_6 VK_7 VK_7 VK_7 VK_7 VK_8 VK_8 VK_8 VK_8 VK_9 VK_9 VK_9 VK_9 VK_0 VK_0 VK_0 VK_0 VK_OEM_MINUS VK_OEM_MINUS VK_OEM_MINUS VK_OEM_MINUS VK_OEM_PLUS VK_OEM_PLUS VK_OEM_PLUS VK_OEM_PLUS Backspace Backspace Backspace Backspace . ."
+    "Tab Tab Tab VK_Q VK_Q VK_Q VK_Q VK_W VK_W VK_W VK_W VK_E VK_E VK_E VK_E VK_R VK_R VK_R VK_R VK_T VK_T VK_T VK_T VK_Y VK_Y VK_Y VK_Y VK_U VK_U VK_U VK_U VK_I VK_I VK_I VK_I VK_O VK_O VK_O VK_O VK_P VK_P VK_P VK_P VK_OEM_4 VK_OEM_4 VK_OEM_4 VK_OEM_4 VK_OEM_6 VK_OEM_6 VK_OEM_6 Enter1 Enter1 Enter1 . ."
+    "Caps Caps Caps Caps VK_A VK_A VK_A VK_A VK_S VK_S VK_S VK_S VK_D VK_D VK_D VK_D VK_F VK_F VK_F VK_F VK_G VK_G VK_G VK_G VK_H VK_H VK_H VK_H VK_J VK_J VK_J VK_J VK_K VK_K VK_K VK_K VK_L VK_L VK_L VK_L VK_OEM_1 VK_OEM_1 VK_OEM_1 VK_OEM_1 VK_OEM_3 VK_OEM_3 VK_OEM_3 VK_OEM_3 VK_OEM_7 VK_OEM_7 VK_OEM_7 Enter2 Enter2 . ."
+    "Shift1 Shift1 VK_OEM_5 VK_OEM_5 VK_OEM_5 VK_OEM_5 VK_Z VK_Z VK_Z VK_Z VK_X VK_X VK_X VK_X VK_C VK_C VK_C VK_C VK_V VK_V VK_V VK_V VK_B VK_B VK_B VK_B VK_N VK_N VK_N VK_N VK_M VK_M VK_M VK_M VK_OEM_COMMA VK_OEM_COMMA VK_OEM_COMMA VK_OEM_COMMA VK_OEM_PERIOD VK_OEM_PERIOD VK_OEM_PERIOD VK_OEM_PERIOD VK_OEM_2 VK_OEM_2 VK_OEM_2 VK_OEM_2 Shift2 Shift2 Shift2 Shift2 Shift2 Shift2 Shift2 . ."
+    "Control1 Control1 Control1 . . . . . Alt1 Alt1 Alt1 Alt1 Alt1 Alt1 Alt1 VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE Alt2 Alt2 Alt2 Alt2 Alt2 Alt2 . . . . . Control2 Control2 Control2 . VK_DECIMAL";
+}
+
+#editablePreview.type3 {
+  grid-template-areas: 
+    "VK_OEM_8 VK_1 VK_1 VK_1 VK_1 VK_2 VK_2 VK_2 VK_2 VK_3 VK_3 VK_3 VK_3 VK_4 VK_4 VK_4 VK_4 VK_5 VK_5 VK_5 VK_5 VK_6 VK_6 VK_6 VK_6 VK_7 VK_7 VK_7 VK_7 VK_8 VK_8 VK_8 VK_8 VK_9 VK_9 VK_9 VK_9 VK_0 VK_0 VK_0 VK_0 VK_OEM_MINUS VK_OEM_MINUS VK_OEM_MINUS VK_OEM_MINUS VK_OEM_PLUS VK_OEM_PLUS VK_OEM_PLUS VK_OEM_PLUS VK_OEM_7 VK_OEM_7 VK_OEM_7 Backspace . ."
+    "Tab Tab Tab VK_Q VK_Q VK_Q VK_Q VK_W VK_W VK_W VK_W VK_E VK_E VK_E VK_E VK_R VK_R VK_R VK_R VK_T VK_T VK_T VK_T VK_Y VK_Y VK_Y VK_Y VK_U VK_U VK_U VK_U VK_I VK_I VK_I VK_I VK_O VK_O VK_O VK_O VK_P VK_P VK_P VK_P VK_OEM_4 VK_OEM_4 VK_OEM_4 VK_OEM_4 VK_OEM_6 VK_OEM_6 VK_OEM_6 Enter1 Enter1 Enter1 . ."
+    "Caps Caps Caps Caps VK_A VK_A VK_A VK_A VK_S VK_S VK_S VK_S VK_D VK_D VK_D VK_D VK_F VK_F VK_F VK_F VK_G VK_G VK_G VK_G VK_H VK_H VK_H VK_H VK_J VK_J VK_J VK_J VK_K VK_K VK_K VK_K VK_L VK_L VK_L VK_L VK_OEM_1 VK_OEM_1 VK_OEM_1 VK_OEM_1 VK_OEM_3 VK_OEM_3 VK_OEM_3 VK_OEM_3 Enter2 Enter2 Enter2 Enter2 Enter2 . ."
+    "Shift1 Shift1 VK_OEM_5 VK_OEM_5 VK_OEM_5 VK_OEM_5 VK_Z VK_Z VK_Z VK_Z VK_X VK_X VK_X VK_X VK_C VK_C VK_C VK_C VK_V VK_V VK_V VK_V VK_B VK_B VK_B VK_B VK_N VK_N VK_N VK_N VK_M VK_M VK_M VK_M VK_OEM_COMMA VK_OEM_COMMA VK_OEM_COMMA VK_OEM_COMMA VK_OEM_PERIOD VK_OEM_PERIOD VK_OEM_PERIOD VK_OEM_PERIOD VK_OEM_2 VK_OEM_2 VK_OEM_2 VK_OEM_2 Shift2 Shift2 Shift2 Shift2 Shift2 Shift2 Shift2 . ."
+    "Control1 Control1 Control1 . . . . . Alt1 Alt1 Alt1 Alt1 Alt1 Alt1 Alt1 VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE VK_SPACE Alt2 Alt2 Alt2 Alt2 Alt2 Alt2 . . . . . Control2 Control2 Control2 . VK_DECIMAL";
+}
+
+.key.VK_1 {
+  grid-area: VK_1
+}
+
+.key.VK_2 {
+  grid-area: VK_2
+}
+
+.key.VK_3 {
+  grid-area: VK_3
+}
+
+.key.VK_4 {
+  grid-area: VK_4
+}
+
+.key.VK_5 {
+  grid-area: VK_5
+}
+
+.key.VK_6 {
+  grid-area: VK_6
+}
+
+.key.VK_7 {
+  grid-area: VK_7
+}
+
+.key.VK_8 {
+  grid-area: VK_8
+}
+
+.key.VK_9 {
+  grid-area: VK_9
+}
+
+.key.VK_0 {
+  grid-area: VK_0
+}
+
+.key.VK_Q {
+  grid-area: VK_Q
+}
+
+.key.VK_W {
+  grid-area: VK_W
+}
+
+.key.VK_E {
+  grid-area: VK_E
+}
+
+.key.VK_R {
+  grid-area: VK_R
+}
+
+.key.VK_T {
+  grid-area: VK_T
+}
+
+.key.VK_Y {
+  grid-area: VK_Y
+}
+
+.key.VK_U {
+  grid-area: VK_U
+}
+
+.key.VK_I {
+  grid-area: VK_I
+}
+
+.key.VK_O {
+  grid-area: VK_O
+}
+
+.key.VK_P {
+  grid-area: VK_P
+}
+
+.key.VK_A {
+  grid-area: VK_A
+}
+
+.key.VK_S {
+  grid-area: VK_S
+}
+
+.key.VK_D {
+  grid-area: VK_D
+}
+
+.key.VK_F {
+  grid-area: VK_F
+}
+
+.key.VK_G {
+  grid-area: VK_G
+}
+
+.key.VK_H {
+  grid-area: VK_H
+}
+
+.key.VK_J {
+  grid-area: VK_J
+}
+
+.key.VK_K {
+  grid-area: VK_K
+}
+
+.key.VK_L {
+  grid-area: VK_L
+}
+
+.key.VK_Z {
+  grid-area: VK_Z
+}
+
+.key.VK_X {
+  grid-area: VK_X
+}
+
+.key.VK_C {
+  grid-area: VK_C
+}
+
+.key.VK_V {
+  grid-area: VK_V
+}
+
+.key.VK_B {
+  grid-area: VK_B
+}
+
+.key.VK_N {
+  grid-area: VK_N
+}
+
+.key.VK_M {
+  grid-area: VK_M
+}
+
+.key.editable.VK_SPACE {
+  grid-area: VK_SPACE;
+  justify-content: center;
+  grid-template-columns: 10% 10%;
+}
+
+.key.VK_DECIMAL {
+  grid-area: VK_DECIMAL
+}
+
+.key.VK_OEM_COMMA {
+  grid-area: VK_OEM_COMMA
+}
+
+.key.VK_OEM_PERIOD {
+  grid-area: VK_OEM_PERIOD
+}
+
+.key.VK_OEM_MINUS {
+  grid-area: VK_OEM_MINUS
+}
+
+.key.VK_OEM_PLUS {
+  grid-area: VK_OEM_PLUS
+}
+
+.key.VK_OEM_1 {
+  grid-area: VK_OEM_1
+}
+
+.key.VK_OEM_2 {
+  grid-area: VK_OEM_2
+}
+
+.key.VK_OEM_3 {
+  grid-area: VK_OEM_3
+}
+
+.key.VK_OEM_4 {
+  grid-area: VK_OEM_4
+}
+
+.key.VK_OEM_5 {
+  grid-area: VK_OEM_5
+}
+
+.key.VK_OEM_6 {
+  grid-area: VK_OEM_6
+}
+
+.key.VK_OEM_7 {
+  grid-area: VK_OEM_7
+}
+
+.key.VK_OEM_8 {
+  grid-area: VK_OEM_8
+}
+
+.key.Backspace {
+  grid-area: Backspace;
+}
+
+#editablePreview.type1 .key.Enter1 {
+  display: none;
+}
+
+#editablePreview.type2 .key.Enter2 {
+  color: transparent;
+}
+
+#editablePreview.type3 .key.Enter1 {
+  color: transparent;
+}
+
+#editablePreview.type2 .key.Enter1, 
+#editablePreview.type3 .key.Enter1 {
+  background: linear-gradient(lightgray 0%, darkgray 200%);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  grid-area: Enter1;
+  border-bottom: none;
+  height: calc(100% + 2px);
+}
+
+.key.system.Enter2 {
+  background: linear-gradient(lightgray -100%, darkgray 100%);
+  border-top-right-radius: 0;
+  grid-area: Enter2;
+  border-top: none;
+}
+
+.key.Tab {
+  grid-area: Tab;
+}
+
+.key.Caps {
+  grid-area: Caps;
+}
+
+.key.Shift1 {
+  grid-area: Shift1;
+}
+
+.key.Shift2 {
+  grid-area: Shift2;
+}
+
+.key.Alt1 {
+  grid-area: Alt1;
+}
+
+.key.Alt2 {
+  grid-area: Alt2;
+}
+
+.key.Control1 {
+  grid-area: Control1;
+}
+
+.key.Control2 {
+  grid-area: Control2;
+}
+
+.key {
+  border-radius: 3px;
+  border: 1px outset gray;
+  border: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.key.system {
+  background: linear-gradient(lightgray, darkgray);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.key.editable {
+  background: linear-gradient(white, lightgray);
+  display: grid;
+  grid-template-columns: 3fr 2fr ;
+  grid-template-rows: 1fr 1fr;
+}
+
+.key.editable:hover {
+  filter: brightness(0.94);
+}
+
+.key.editable:focus {
+  outline-color: firebrick;
+  outline-width: 2px;
+  filter: brightness(1.1);
+}
+
+.keyPreview {
+  width: 100%;
+  height: 100%;
+  /* vertical-align: middle; */
+  display: flex;
+  flex-direction: column;
+  /* display: inline-block; */
+  justify-content: center;
+}
+
+.keyPreview.cell1,
+.keyPreview.cell3 {
+  font-size: 135%;
+}
+
+.keyPreview.cell2,
+.keyPreview.cell4 {
+  color: #999;
+  font-size: 80%;
+}
