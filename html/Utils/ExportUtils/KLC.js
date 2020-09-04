@@ -107,7 +107,7 @@ module.register('.KLC', function (
     const getKeynames = o => Object
       .entries(o)
       .map(el => [el[0], `"${el[1]}"`])
-      .reduce((a, c) => { a[c[0].toString(16).padStart(2, 0)] = c[1]; return a }, {})
+      // .reduce((a, c) => { a[c[0].toString(16).padStart(2, 0)] = c[1]; return a }, {})
 
     const getVKName = o => Object
       .keys(OKLCUtils.VirtualKeys)
@@ -128,26 +128,15 @@ module.register('.KLC', function (
 
     const mapCharToShiftStates = (obj, arr) => modFlags.map(v => {
       const char = arr[v]
-      if (!char /* || char.toInt() === OKLCUtils.AssocChars.NONE */) return '-1'
+      if (!char) return '-1'
       if (char instanceof OKLCUtils.Ligature) {
         ligatures.push([getVKName(obj.virtualKey), v, char.chars.map(char => char.toString(4))])
         return '%%'
       }
-      // if (char.toInt() === OKLCUtils.AssocChars.LGTR) return '%%'
       return char.toString(4) + (char.isDead() ? '@' : '')
     })
 
     const ligatures = []
-    /* const ligatures = layout.layoutLigatures
-      .map(lig => [lig, (lig.modifierKeys & OKLCUtils.ModFlags.ALT) !== (lig.modifierKeys & OKLCUtils.ModFlags.CTRL) >>> 1
-        ? lig.modifierKeys ^ (OKLCUtils.ModFlags.ALT | OKLCUtils.ModFlags.CTRL)
-        : lig.modifierKeys])
-      .map(ligArr => [
-        getVKName(ligArr[0].virtualKey),
-        ligArr[1],
-        ...ligArr[0].chars.map(char => char.toString(4))
-      ]) */
-
     const layoutData = layout.layoutCharEntrys
       .map(char => [layout.layoutKeyBindings.find(bnd => bnd.virtualKeyCode === char.virtualKey), char])
       .filter(o => o[0])
@@ -165,6 +154,16 @@ module.register('.KLC', function (
         return chars
       })
 
+    const deadKeyData = {}
+    layout.layoutDeadKeys.forEach(deadKey => {
+      const key = deadKey.accentChar.toString(4)
+      if (!deadKeyData[key]) deadKeyData[key] = {}
+      const obj = deadKeyData[key]
+      obj[deadKey.baseChar.toString(4)] =
+        deadKey.compositeChar.toString(4) +
+        (deadKey.compositeChar.isDead() ? '@' : '')
+    })
+
     const data = []
     data.push(['KBD', layout.metadata.kbd, `"${layout.metadata.desc}"`])
     data.push(['COPYRIGHT', `"${layout.metadata.copyright}"`])
@@ -175,72 +174,29 @@ module.register('.KLC', function (
     data.push(['SHIFTSTATE', KLCModFlags.reduce((p, c) => { p[c] = null; return p }, {})])
     data.push(['LAYOUT', layoutData])
     data.push(['LIGATURE', ligatures])
-    data.push(['DEADKEY', []])
+    // data.push(['DEADKEY', []])
+    data.push(...Object.entries(deadKeyData).map(v => ['DEADKEY', ...v]))
     data.push(['KEYNAME', getKeynames(ExportUtils.KLCKeyNames)])
     data.push(['KEYNAME_EXT', getKeynames(ExportUtils.KLCKeyNamesExt)])
-    data.push(['KEYNAME_DEAD', []])
-    data.push(['DESCRIPTIONS', { '0409': layout.metadata.desc }])
-    data.push(['LANGUAGENAMES', { '0409': 'English (United States)' /* TODO get language from locale */ }])
+    data.push(['KEYNAME_DEAD', []]) // TODO
+    data.push(['DESCRIPTIONS', [['0409', layout.metadata.desc]]])
+    data.push(['LANGUAGENAMES', [['0409', 'English (United States)']]])
     data.push(['ENDKBD', null])
 
-    /* let fileStr =
-      `KBD\t${layout.metadata.kbd}\t"${layout.metadata.desc}"\r\n\r\n` +
-      `COPYRIGHT\t"${layout.metadata.copyright}"\r\n\r\n` +
-      `COMPANY\t"${layout.metadata.author}"\r\n\r\n` +
-      `LOCALENAME\t"${layout.metadata.localename.join('-')}"\r\n\r\n` +
-      `LOCALEID\t"${layout.metadata.localeid.toString(16).padStart(8, 0)}"\r\n\r\n` +
-      `VERSION\t${layout.metadata.version.join('.')}\r\n\r\n`
+    return [data, data.map(items => // items.join('\t')
+      items.map(item => {
+        if (item === null) return ''
+        if (typeof item !== 'object') return item
+        try {
+          return item.map(itemdata => {
+            if (typeof itemdata !== 'object') return itemdata
+            return itemdata.join('\t')
+          }).join('\r\n')
+        } catch (err) { console.log(item, err) }
+      }
+      ).join('\t')
+    ).join('\r\n\r\n')]
 
-    const attribs = Object
-      .entries(OKLCUtils.AttribFlags)
-      .filter(flag => layout.attributes & flag[1])
-      .map(flag => flag[0])
-      .join('\r\n')
-
-    if (attribs) fileStr += `ATTRIBUTES\r\n${attribs}\r\n\r\n`
-
-    /* const shiftstates = [0, 1, 4, 5, 2, 3, 6, 7]
-      .map((v, i) => [v, i])
-      .filter(state => layout.layoutCharEntrys.some(charEnt =>
-        charEnt.chars.some((_, i) => i === state[1]) ||
-        charEnt.sgcapchars.some((_, i) => i === state[1])
-      ))
-
-    fileStr +=
-      `SHIFTSTATE\r\n\r\n${shiftstates.map(o => o[0]).join('\r\n')}\r\n\r\n` +
-      'LAYOUT\r\n\r\n'
-
-    const mapToShiftstates = (arr, states = shiftstates.map(o => o[1]).sort((a, b) => a - b)) =>
-      states.map(i => {
-        if (!arr[i] || arr[i] === OKLCUtils.AssocChars.NONE) return '-1'
-        if (arr[i][1] === '@') return `${arr[i].codePointAt(0).toString(16).padStart(4, 0)}@`
-        if (arr[i] === OKLCUtils.AssocChars.LGTR) return '%%'
-        return arr[i].codePointAt(0).toString(16).padStart(4, 0)
-      })
-    const tableData = layout.layoutCharEntrys
-      .map(char => ({ bind: layout.layoutKeyBindings.find(bnd => bnd.virtualKeyCode === char.virtualKey), char }))
-      .filter(o => o.bind)
-      .flatMap(o => {
-        const rows = [[
-          o.bind.scanCode.toString(16).padStart(2, 0),
-          Object.keys(OKLCUtils.VirtualKeys).find(vk => OKLCUtils.VirtualKeys[vk] === o.char.virtualKey) ||
-           String.fromCodePoint(o.char.virtualKey),
-          o.char.flags,
-          ...mapToShiftstates(o.char.chars)
-        ]]
-
-        if (o.char.sgcapchars.length) {
-          rows[0][2] = 'SGCap'
-          rows.push([-1, -1, 0, ...mapToShiftstates(o.char.sgcapchars)].slice(0, 2))
-        }
-        return rows
-      })
-
-    fileStr += tableData.map(data => data.join('\t')).join('\r\n') + '\r\n\r\n' */
-
-    // fileStr += 'ENDKBD\r\n'
-
-    // return fileStr
     return data
   }
 }, ['ExportUtils', 'OKLCUtils', 'VirtualKeys'])

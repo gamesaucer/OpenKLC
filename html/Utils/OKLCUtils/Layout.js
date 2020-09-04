@@ -68,6 +68,7 @@ module.register('Layout', function (
    */
   module.Char = class Char {
     constructor (char, dead = false) {
+      this.dead = dead
       this.char = typeof char === 'string'
         ? char.codePointAt(0)
         : char
@@ -134,14 +135,13 @@ module.register('Layout', function (
    * Dead key table entry
    */
   module.DeadKey = class DeadKey {
-    constructor (accentChar, baseChar, compositeChar, dead) {
+    constructor (accentChar, baseChar, compositeChar) {
       this.accentChar = accentChar
       this.baseChar = baseChar
       this.compositeChar = compositeChar
-      this.dead = dead
 
-      ;[accentChar, baseChar, compositeChar].forEach(char =>
-        Utils.Errors.StringLength('Expected a single character but received text of length %1', char, 1, 1))
+      // ;[accentChar, baseChar, compositeChar].forEach(char =>
+      //  Utils.Errors.StringLength('Expected a single character but received text of length %1', char, 1, 1))
     }
 
     serialise () {}
