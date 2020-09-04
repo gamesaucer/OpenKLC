@@ -7,7 +7,8 @@ module.register('Layout', function (module = window.OKLCUtils, Utils = window.Ut
       this.metadata = {
         kbd: 'Layout##',
         desc: 'Keyboard Layout Description',
-        copyright: `(c) ${(new Date()).getFullYear()} Layout Author`,
+        copyright: `(c) ${(new Date()).getFullYear()}`,
+        author: 'Layout Author',
         localename: ['en', 'US'],
         localeid: 0x809,
         version: [1, 0],
@@ -109,4 +110,4 @@ module.register('Layout', function (module = window.OKLCUtils, Utils = window.Ut
     static deserialise () {}
     is () {}
   }
-}, ['Utils', 'OKLCUtils'])
+}, ['Utils', 'OKLCUtils', 'VirtualKeys'])

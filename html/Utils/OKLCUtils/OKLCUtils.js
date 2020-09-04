@@ -38,16 +38,17 @@ module.register('OKLCUtils', function (module = {}) {
     /** Control key held */
     CTRL: 0x04,
 
-    /** Sgcaps toggled on */
+    /** Sgcaps toggled on -- internal only */
     SGCAPS: 0x40
 
-    /*
-    For Asian keyboards. Can't support them atm because I don't know how they work yet.
-    KANA: 0x08,
-    ROYA: 0x10,
-    LOYA: 0x20,
-    GRPSELTAP: 0x80,
-    */
+    /*                                                                                   *\
+      For Asian keyboards. Can't support them atm because I don't know how they work yet.
+
+      KANA: 0x08,
+      ROYA: 0x10,
+      LOYA: 0x20,
+      GRPSELTAP: 0x80,
+    \*                                                                                   */
   }
 
   /**
@@ -64,7 +65,7 @@ module.register('OKLCUtils', function (module = {}) {
   }
 
   /**
-   * Enum for key association table attribute flags
+   * Enum for char association table attribute flags
    * @enum {Number}
    */
   module.AssocFlags = {
@@ -81,15 +82,16 @@ module.register('OKLCUtils', function (module = {}) {
     /** Caps + Altgr functions as Shift + Altgr */
     CAPLOKALTGR: 0x04
 
-    /*
-    For Asian keyboards. Can't support them atm because I don't know how they work yet.
-    KANALOK: 0x08,
-    GRPSELTAP: 0x80
-    */
+    /*                                                                                   *\
+      For Asian keyboards. Can't support them atm because I don't know how they work yet.
+
+      KANALOK: 0x08,
+      GRPSELTAP: 0x80
+    \*                                                                                   */
   }
 
   /**
-   * Enum for key association table special characters
+   * Enum for char association table special characters
    * @enum {Number}
    */
   module.AssocChars = {
@@ -103,12 +105,6 @@ module.register('OKLCUtils', function (module = {}) {
     /** Ligature Lookup */
     LGTR: 0xF002
   }
-
-  /**
-   * Enum for virtual keys
-   * @enum {Number}
-   */
-  module.VirtualKeys = {}
 
   /**
    * Enum for virtual key flags
@@ -131,13 +127,14 @@ module.register('OKLCUtils', function (module = {}) {
     /** Key is on the numpad */
     NUMPAD: 0x0800
 
-    /*
-    No idea what any of these do as of yet.
-    UNICODE: 0x1000,
-    INJECTEDVK: 0x2000,
-    MAPPEDVK: 0x4000,
-    BREAK: 0x8000
-    */
+    /*                                       *\
+      No idea what any of these do as of yet.
+
+      UNICODE: 0x1000,
+      INJECTEDVK: 0x2000,
+      MAPPEDVK: 0x4000,
+      BREAK: 0x8000
+    \*                                       */
   }
 
   /**
