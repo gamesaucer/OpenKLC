@@ -1,7 +1,8 @@
 module.register('.KLC', function (
   module = window.ExportUtils,
   ExportUtils = window.ExportUtils,
-  OKLCUtils = window.OKLCUtils
+  OKLCUtils = window.OKLCUtils,
+  Utils = window.Utils
 ) {
   /**
    * Enum for modifier key flags exclusive to KLC
@@ -107,7 +108,6 @@ module.register('.KLC', function (
     const getKeynames = o => Object
       .entries(o)
       .map(el => [el[0], `"${el[1]}"`])
-      // .reduce((a, c) => { a[c[0].toString(16).padStart(2, 0)] = c[1]; return a }, {})
 
     const getVKName = o => Object
       .keys(OKLCUtils.VirtualKeys)
@@ -164,6 +164,19 @@ module.register('.KLC', function (
         (deadKey.compositeChar.isDead() ? '@' : '')
     })
 
+    const namedDeadKeys = [
+      ...layout.layoutDeadKeyNames.map(o => [o.accentChar.toString(4), `"${o.name}"`])
+    ]
+    namedDeadKeys.push(
+      ...Object
+        .keys(deadKeyData)
+        .filter(keyCode => !namedDeadKeys
+          .map(pair => pair[0])
+          .includes(keyCode))
+        .map(keyCode => [keyCode, `"${Utils.getCharName(Number(`0x${keyCode}`))}"`])
+    )
+    console.log(namedDeadKeys)
+
     const data = []
     data.push(['KBD', layout.metadata.kbd, `"${layout.metadata.desc}"`])
     data.push(['COPYRIGHT', `"${layout.metadata.copyright}"`])
@@ -171,32 +184,25 @@ module.register('.KLC', function (
     data.push(['LOCALENAME', `"${layout.metadata.localename.join('-')}"`])
     data.push(['LOCALEID', `"${layout.metadata.localeid.toString(16).padStart(8, 0)}"`])
     data.push(['VERSION', layout.metadata.version.join('.')])
-    data.push(['SHIFTSTATE', KLCModFlags.reduce((p, c) => { p[c] = null; return p }, {})])
-    data.push(['LAYOUT', layoutData])
-    data.push(['LIGATURE', ligatures])
-    // data.push(['DEADKEY', []])
-    data.push(...Object.entries(deadKeyData).map(v => ['DEADKEY', ...v]))
+    if (KLCModFlags.length) data.push(['SHIFTSTATE', KLCModFlags])
+    if (layoutData.length) data.push(['LAYOUT', layoutData])
+    if (ligatures.length) data.push(['LIGATURE', ligatures])
+    data.push(...Object.entries(deadKeyData).map(v => ['DEADKEY', v[0], [...Object.entries(v[1])]]))
     data.push(['KEYNAME', getKeynames(ExportUtils.KLCKeyNames)])
     data.push(['KEYNAME_EXT', getKeynames(ExportUtils.KLCKeyNamesExt)])
-    data.push(['KEYNAME_DEAD', []]) // TODO
+    if (namedDeadKeys.length) data.push(['KEYNAME_DEAD', namedDeadKeys])
     data.push(['DESCRIPTIONS', [['0409', layout.metadata.desc]]])
     data.push(['LANGUAGENAMES', [['0409', 'English (United States)']]])
-    data.push(['ENDKBD', null])
+    data.push(['ENDKBD'])
 
-    return [data, data.map(items => // items.join('\t')
-      items.map(item => {
-        if (item === null) return ''
-        if (typeof item !== 'object') return item
-        try {
-          return item.map(itemdata => {
-            if (typeof itemdata !== 'object') return itemdata
-            return itemdata.join('\t')
-          }).join('\r\n')
-        } catch (err) { console.log(item, err) }
-      }
+    console.log(data, deadKeyData)
+    return data.map(docSection =>
+      docSection.map(docSectionContent =>
+        typeof docSectionContent === 'string'
+          ? docSectionContent
+          : '\r\n\r\n' + docSectionContent.map(docTable =>
+            docTable instanceof Array ? docTable.join('\t') : docTable).join('\r\n')
       ).join('\t')
-    ).join('\r\n\r\n')]
-
-    return data
+    ).join('\r\n\r\n')
   }
-}, ['ExportUtils', 'OKLCUtils', 'VirtualKeys'])
+}, ['ExportUtils', 'OKLCUtils', 'VirtualKeys', 'CharNames'])
