@@ -1,4 +1,12 @@
-module.register('Layout', function (module = window.OKLCUtils, Utils = window.Utils, OKLCUtils = window.OKLCUtils) {
+module.register('Layout', function (
+  module = window.OKLCUtils,
+  Utils = window.Utils,
+  OKLCUtils = window.OKLCUtils
+) {
+  const getDupeFilterFn = input => value => !input.some(o => o.is(value))
+  const splice = (array, valuesToRemove, valuesToAdd = []) =>
+    array.splice(0, 0, ...array.splice(0).filter(getDupeFilterFn(valuesToRemove)), ...valuesToAdd)
+
   /**
    * Representation of a keyboard layout
    */
@@ -17,16 +25,23 @@ module.register('Layout', function (module = window.OKLCUtils, Utils = window.Ut
       }
       this.attributes = attributes
 
-      const getDupeFilterFn = input => value => !input.some(o => o.is(value))
-      const splice = (array, valuesToRemove, valuesToAdd = []) =>
-        array.splice(0, 0, ...array.splice(0).filter(getDupeFilterFn(valuesToRemove)), ...valuesToAdd)
-
-      ;[OKLCUtils.KeyBinding, OKLCUtils.Char, OKLCUtils.Ligature, OKLCUtils.DeadKey, OKLCUtils.DeadKeyName].forEach(dataType => {
-        this[`layout${dataType.name}s`] = []
-        this[`add${dataType.name}s`] = function (...args) { splice(this[`layout${dataType.name}s`], args, args) }
-        this[`remove${dataType.name}s`] = function (...args) { splice(this[`layout${dataType.name}s`], args) }
-      })
+      ;[OKLCUtils.KeyBinding, OKLCUtils.CharEntry, /* OKLCUtils.Ligature, */ OKLCUtils.DeadKey, OKLCUtils.DeadKeyName]
+        .forEach(dataType => {
+          this[`layout${dataType.name}s`] = []
+          this[`add${dataType.name}s`] = function (...args) { splice(this[`layout${dataType.name}s`], args, args) }
+          this[`remove${dataType.name}s`] = function (...args) { splice(this[`layout${dataType.name}s`], args) }
+        })
     }
+
+    /* addLigatures (...args) {
+      splice(this.layoutLigatures, args, args)
+      args.forEach(ligature => {
+        const entry = this.layoutCharEntrys
+          .find(chrEnt => chrEnt.virtualKey === ligature.virtualKey) ||
+          this.addCharEntrys(new OKLCUtils.CharEntry(ligature.virtualKey, OKLCUtils.AssocFlags.NONE, [], []))
+        entry.chars[ligature.modifierKeys] = OKLCUtils.AssocChars.LGTR
+      })
+    } */
 
     serialise () {}
     static deserialise () {}
@@ -37,7 +52,9 @@ module.register('Layout', function (module = window.OKLCUtils, Utils = window.Ut
    */
   module.KeyBinding = class KeyBinding {
     constructor (virtualKeyCode, scanCode) {
-      this.virtualKeyCode = virtualKeyCode
+      this.virtualKeyCode = typeof virtualKeyCode === 'string'
+        ? virtualKeyCode.charCodeAt(0)
+        : virtualKeyCode
       this.scanCode = scanCode
     }
 
@@ -47,13 +64,34 @@ module.register('Layout', function (module = window.OKLCUtils, Utils = window.Ut
   }
 
   /**
-   * Char table entry for a virtual key
+   * Individual character
    */
   module.Char = class Char {
-    constructor (virtualKey, flags, ...chars) {
-      this.virtualKey = virtualKey
+    constructor (char, dead = false) {
+      this.char = typeof char === 'string'
+        ? char.codePointAt(0)
+        : char
+    }
+
+    isDead () { return this.dead }
+    toString (n) { return this.char.toString(16).padStart(n, 0) }
+    toInt () { return this.char }
+
+    serialise () {}
+    static deserialise () {}
+  }
+
+  /**
+   * Char table entry for a virtual key
+   */
+  module.CharEntry = class CharEntry {
+    constructor (virtualKey, flags, chars = [], sgcapchars = []) {
+      this.virtualKey = typeof virtualKey === 'string'
+        ? virtualKey.charCodeAt(0)
+        : virtualKey
       this.flags = flags
       this.chars = chars
+      this.sgcapchars = sgcapchars
     }
 
     serialise () {}
@@ -62,15 +100,15 @@ module.register('Layout', function (module = window.OKLCUtils, Utils = window.Ut
   }
 
   /**
-   * Ligature table entry for a virtual key
+   * Multiple characters
    */
   module.Ligature = class Ligature {
-    constructor (virtualKey, modifierKeys, ...chars) {
-      this.virtualKey = virtualKey
-      this.modifierKeys = modifierKeys
-      this.chars = chars
-
+    // Ligature table entry for a virtual key
+    constructor (chars/*, virtualKey, modifierKeys */) {
       Utils.Errors.StringLength('Expected text of length %2-%3 but received length %1', chars, 1, 4)
+      this.chars = [...chars].map(c => new OKLCUtils.Char(c))
+      // this.virtualKey = virtualKey
+      // this.modifierKeys = modifierKeys
     }
 
     serialise () {}

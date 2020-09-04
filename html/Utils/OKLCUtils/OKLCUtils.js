@@ -36,10 +36,10 @@ module.register('OKLCUtils', function (module = {}) {
     ALT: 0x02,
 
     /** Control key held */
-    CTRL: 0x04,
+    CTRL: 0x04
 
     /** Sgcaps toggled on -- internal only */
-    SGCAPS: 0x40
+    // SGCAPS: 0x100
 
     /*                                                                                   *\
       For Asian keyboards. Can't support them atm because I don't know how they work yet.

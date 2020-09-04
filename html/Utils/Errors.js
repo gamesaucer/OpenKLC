@@ -1,4 +1,4 @@
-module.register('Errors', function (module = window.Utils, Utils = window.utils) {
+module.register('Errors', function (module = window.Utils, Utils = window.Utils) {
   module.Errors = (function () {
     /**
      * Throws an error if a string is of the wrong length
