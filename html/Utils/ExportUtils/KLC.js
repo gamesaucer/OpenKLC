@@ -1,4 +1,4 @@
-module.register('.KLC', function (
+module.register('ExportKLC', function (
   module = window.ExportUtils,
   ExportUtils = window.ExportUtils,
   OKLCUtils = window.OKLCUtils,

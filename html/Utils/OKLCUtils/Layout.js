@@ -69,9 +69,29 @@ module.register('Layout', function (
   module.Char = class Char {
     constructor (char, dead = false) {
       this.dead = dead
-      this.char = typeof char === 'string'
-        ? char.codePointAt(0)
-        : char
+
+      if (typeof char === 'string') {
+        if (char.length > 1 && char.slice(-1) === '@') {
+          this.dead = true
+          char = char.slice(0, -1)
+        }
+        if (char.length === 1) {
+          this.char = char.codePointAt(0)
+        } else {
+          this.char = Number(`0x${char}`)
+        }
+      } else if (typeof char === 'number') {
+        this.char = char
+      }
+
+      if (this.char > 0xffff) throw new RangeError(`character code ${this.char} above 2-byte limit`)
+      if (this.char < 0) throw new RangeError(`character code ${this.char} below 0`)
+      if (isNaN(this.char)) throw new TypeError(`${char} is not a valid character value`)
+      /* this.char = typeof char === 'string'
+        ? char.length === 1
+          ? char.codePointAt(0)
+          : Number(`0x${char.slice(0, 4)}`)
+        : char */
     }
 
     isDead () { return this.dead }
@@ -91,8 +111,16 @@ module.register('Layout', function (
         ? virtualKey.charCodeAt(0)
         : virtualKey
       this.flags = flags
-      this.chars = chars
-      this.sgcapchars = sgcapchars
+      this.chars = chars.map(char => char instanceof OKLCUtils.Char
+        ? char
+        : Number(char) === -1
+          ? undefined
+          : new OKLCUtils.Char(char))
+      this.sgcapchars = sgcapchars.map(char => char instanceof OKLCUtils.Char
+        ? char
+        : Number(char) === -1
+          ? undefined
+          : new OKLCUtils.Char(char))
     }
 
     serialise () {}
