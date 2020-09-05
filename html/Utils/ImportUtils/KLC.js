@@ -15,11 +15,9 @@ module.register('ImportKLC', function (
 
         const sectionTypes = {
           KBD: (str) => {
-            // const data = str.split(/\s+/).slice(1)
             layout.metadata.kbd = str.split(/\s+/)[1].trim()
             const descIndex = str.indexOf('"')
             if (descIndex >= 0) layout.metadata.desc = str.slice(descIndex).trim().replace(/^"|"$/g, '')
-            // layout.metadata.desc = data[1].trim().replace(/^"|"$/g, '') || ''
           },
           COPYRIGHT: (str) => {
             layout.metadata.copyright = str.trim().replace(/^"|"$/g, '')
@@ -49,7 +47,6 @@ module.register('ImportKLC', function (
           LAYOUT: (str) => {
             const data = str
               .split('\n')
-              // .filter(s => s.length)
               .map(record => record
                 .split(/\s+/)
                 .filter(s => s.length))
@@ -74,7 +71,6 @@ module.register('ImportKLC', function (
           LIGATURE: (str) => {
             const data = str
               .split('\n')
-              // .filter(s => s.length)
               .map(record => record
                 .split(/\s+/)
                 .filter(s => s.length))
@@ -89,7 +85,6 @@ module.register('ImportKLC', function (
           DEADKEY: (str) => {
             const data = str
               .split('\n')
-              // .filter(s => s.length)
               .map(record => record
                 .split(/\s+/)
                 .filter(s => s.length))
@@ -107,12 +102,12 @@ module.register('ImportKLC', function (
           KEYNAME_DEAD: (str) => {
             const data = str
               .split('\n')
-              .filter(s => s.length)
               .map(record => record
                 .split(/\s+/)
                 .filter(s => s.length))
+              .filter(s => s.length)
             layout.addDeadKeyNames(...data.map(pair =>
-              new OKLCUtils.DeadKeyName(Number(`0x${pair[0]}`), pair[1].replace(/^"|"$/g, ''))))
+              new OKLCUtils.DeadKeyName(Number(`0x${pair[0]}`), pair.slice(1).join(' ').replace(/^"|"$/g, ''))))
           },
           DESCRIPTIONS: () => {},
           LANGUAGENAMES: () => {}

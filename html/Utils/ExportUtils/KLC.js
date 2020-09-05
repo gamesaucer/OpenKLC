@@ -137,6 +137,10 @@ module.register('ExportKLC', function (
     })
 
     const ligatures = []
+
+    // TODO redo: table is built super wrong.
+    // Looks like a lot of indices are left out
+    // Keycode is also not printed right, and neither are VK keys.
     const layoutData = layout.layoutCharEntrys
       .map(char => [layout.layoutKeyBindings.find(bnd => bnd.virtualKeyCode === char.virtualKey), char])
       .filter(o => o[0])
@@ -165,7 +169,7 @@ module.register('ExportKLC', function (
     })
 
     const namedDeadKeys = [
-      ...layout.layoutDeadKeyNames.map(o => [o.accentChar.toString(4), `"${o.name}"`])
+      ...layout.layoutDeadKeyNames.map(o => [o.accentChar.toString(16).padStart(4, 0), `"${o.name}"`])
     ]
     namedDeadKeys.push(
       ...Object
@@ -173,9 +177,12 @@ module.register('ExportKLC', function (
         .filter(keyCode => !namedDeadKeys
           .map(pair => pair[0])
           .includes(keyCode))
-        .map(keyCode => [keyCode, `"${Utils.getCharName(Number(`0x${keyCode}`))}"`])
+        .map(keyCode => [
+          keyCode.toString(16).padStart(4, 0),
+          `"${Utils.getCharName(Number(`0x${keyCode}`))}"`
+        ])
     )
-    console.log(namedDeadKeys)
+    console.log(layoutData)
 
     const data = []
     data.push(['KBD', layout.metadata.kbd, `"${layout.metadata.desc}"`])
@@ -195,7 +202,6 @@ module.register('ExportKLC', function (
     data.push(['LANGUAGENAMES', [['0409', 'English (United States)']]])
     data.push(['ENDKBD'])
 
-    console.log(data, deadKeyData)
     return data.map(docSection =>
       docSection.map(docSectionContent =>
         typeof docSectionContent === 'string'
