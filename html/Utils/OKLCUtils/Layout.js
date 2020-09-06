@@ -67,25 +67,26 @@ module.register('Layout', function (
    * Individual character
    */
   module.Char = class Char {
-    constructor (char, dead = false) {
+    constructor (char, dead) {
       this.dead = dead
 
       if (typeof char === 'string') {
         if (char.length > 1 && char.slice(-1) === '@') {
-          this.dead = true
+          if (dead === undefined) this.dead = true
           char = char.slice(0, -1)
         }
         if (char.length === 1) {
           this.char = char.codePointAt(0)
         } else {
-          this.char = Number(`0x${char}`)
+          this.char = Utils.hex(char)
         }
       } else if (typeof char === 'number') {
         this.char = char
       }
+      if (this.dead === undefined) this.dead = false
 
       if (this.char > 0xffff) throw new RangeError(`character code ${this.char} above 2-byte limit`)
-      if (this.char < 0) throw new RangeError(`character code ${this.char} below 0`)
+      // if (this.char < 0) throw new RangeError(`character code ${this.char} below 0`)
       if (isNaN(this.char)) throw new TypeError(`${char} is not a valid character value`)
       /* this.char = typeof char === 'string'
         ? char.length === 1
@@ -95,7 +96,7 @@ module.register('Layout', function (
     }
 
     isDead () { return this.dead }
-    toString (n) { return this.char.toString(16).padStart(n, 0) }
+    toString (n) { return this.char < 0 ? String(this.char) : this.char.toString(16).padStart(n, 0) }
     toInt () { return this.char }
 
     serialise () {}

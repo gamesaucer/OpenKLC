@@ -4,9 +4,52 @@ module.register('ImportKLC', function (
   OKLCUtils = window.OKLCUtils,
   Utils = window.Utils
 ) {
+  const readFile = function (blob) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onerror = () => reject(reader.error)
+      reader.onload = () => resolve(parseFile(
+        reader.result
+          .replace(/(?:\/\/|;).*$/gm, '')
+          .replace(/ENDKBD.*/s, ' ')
+          .replace(/[\t ]+/g, ' ')
+      ))
+      reader.readAsText(blob)
+    })
+  }
+
+  const parseFile = function (str) {
+    const layoutData = {}
+    str
+      .split(new RegExp(`(?=${Object.keys(sectionTypes).join('|')})`))
+      .map(section => section.split(/(?<=^\w+) /))
+      .forEach(el => sectionTypes[el[0]](layoutData, el[1].trim()))
+    /* const layout = new OKLCUtils.Layout()
+    const sections = str.split(new RegExp(`(?=${Object.keys(sectionTypes).join('|')})`))
+    sections
+      .map(section => section.split(/(^\w+)/).slice(1))
+      .sort((a, b) => {
+        const starr = Object.keys(sectionTypes)
+        return starr.findIndex(key => a[0] === key) - starr.findIndex(key => b[0] === key)
+      })
+      .forEach(el => sectionTypes[el[0]](el[1]))
+    layout.addCharEntrys(...OKLCCharEntry.map(args => new OKLCUtils.CharEntry(...args)))
+  */
+  }
+
+  const KBD = function (dataObj, dataStr) {
+    const i = dataStr.indexOf(' ')
+    dataObj.name = i !== -1 ? dataStr.slice(0, i).replace(/^[ "]|[ "]$/, '') : ''
+    dataObj.desc = i !== -1 ? dataStr.slice(i + 1).replace(/^[ "]|[ "]$/, '') : ''
+  }
+
+  const sectionTypes = {
+    KBD
+  }
+
   module.KLC = function (blob) {
     return new Promise((resolve, reject) => {
-      var reader = new FileReader()
+      /* var reader = new FileReader()
       reader.onload = function () {
         const layout = new OKLCUtils.Layout()
 
@@ -34,6 +77,7 @@ module.register('ImportKLC', function (
           VERSION: (str) => {
             layout.metadata.version = str.trim().replace(/^"|"$/g, '').split('.')
           },
+          MODIFIERS: () => {}, // TODO
           SHIFTSTATE: (str) => {
             const regex = /^([0-9]+)/g
             const shiftStatesKLC = []
@@ -128,7 +172,7 @@ module.register('ImportKLC', function (
         layout.addCharEntrys(...OKLCCharEntry.map(args => new OKLCUtils.CharEntry(...args)))
         resolve(layout)
       }
-      reader.readAsText(blob)
+      reader.readAsText(blob) */
     })
   }
 }, ['OKLCUtils', 'VirtualKeys'])
