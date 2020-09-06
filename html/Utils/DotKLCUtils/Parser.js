@@ -4,39 +4,6 @@ module.register('DotKLCParser', function (
   OKLCUtils = window.OKLCUtils,
   Utils = window.Utils
 ) {
-  /* const readFile = function (blob) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader()
-      reader.onerror = () => reject(reader.error)
-      reader.onload = () => resolve(parseFile(
-        reader.result
-          .replace(/(?:\/\/|;).*$/gm, '')
-          .replace(/ENDKBD. *//* s, ' ')
-          .replace(/[\t ]+/g, ' ')
-          .replace(/\r\n/g, '\n')
-      ))
-      reader.readAsText(blob)
-    })
-  }
-
-  const parseFile = function (str) {
-    const layoutData = {}
-    str
-      .split(new RegExp(`(?=${Object.keys(sectionTypes).join('|')})`))
-      .map(section => section.split(/(?<=^\w+) /))
-      .forEach(el => sectionTypes[el[0]](layoutData, el[1].trim()))
-  }
-
-  /* const KBD = function (dataObj, dataStr) {
-    const i = dataStr.indexOf(' ')
-    dataObj.name = i !== -1 ? dataStr.slice(0, i).replace(/^[ "]|[ "]$/, '') : ''
-    dataObj.desc = i !== -1 ? dataStr.slice(i + 1).replace(/^[ "]|[ "]$/, '') : ''
-  }
-
-  const sectionTypes = {
-    KBD
-  } */
-
   const trimSpaceNQuote = str => str.replace(/^[ "]|[ "]$/g, '')
   const addOptionalQuotes = str => str.includes(' ') ? `"${str}"` : str
   const escapeSpecialChars = str => str
@@ -56,7 +23,6 @@ module.register('DotKLCParser', function (
         version: '',
         name: '',
         description: '',
-        modifiers: [],
         keyname: [],
         keyname_ext: [],
         keyname_dead: [],
@@ -76,7 +42,6 @@ module.register('DotKLCParser', function (
         'COMPANY',
         'LOCALEID',
         'LOCALENAME',
-        'MODIFIERS',
         'SHIFTSTATE',
         'ATTRIBUTES',
         'LAYOUT',
@@ -105,13 +70,6 @@ module.register('DotKLCParser', function (
       this.data.description = i !== -1 ? trimSpaceNQuote(dataString.slice(i + 1)) : ''
     }
 
-    set MODIFIERS (dataString) {
-      this.data.modifiers = dataString
-        .split('\n')
-        .filter(line => line.length)
-        .map(line => trimSpaceNQuote(line.trim()))
-    }
-
     set SHIFTSTATE (dataString) {
       this.data.shiftstate = dataString
         .split('\n')
@@ -120,7 +78,6 @@ module.register('DotKLCParser', function (
     }
 
     set LAYOUT (dataString) {
-      // ERROR for ligatures
       const lines = dataString
         .split('\n')
         .filter(line => line.length)
@@ -140,7 +97,9 @@ module.register('DotKLCParser', function (
         }
 
         lineData.chars.push(...line.slice(3).map(field =>
-          new OKLCUtils.Char(field)
+          field === '-1' || field === '%%'
+            ? field
+            : new OKLCUtils.Char(field)
         ))
 
         if (line[2] === 'SGCap') {
@@ -163,11 +122,11 @@ module.register('DotKLCParser', function (
       this.data.ligature = dataString
         .split('\n')
         .filter(line => line.length)
-        .map(line => line.split(' '))
+        .map(line => line.trim().split(' '))
         .map(line => ({
           vk: line[0],
           flags: line[1],
-          chars: line.slice(3).map(field => new OKLCUtils.Char(field, false))
+          chars: line.slice(2).map(field => new OKLCUtils.Char(field, false))
         }))
     }
 
@@ -267,7 +226,6 @@ module.register('DotKLCParser', function (
     }`
     }
 
-    get MODIFIERS_STRING () { return '' } // TODO: what are modifiers even?
     get SHIFTSTATE_STRING () {
       return this.data.shiftstate.length
         ? `SHIFTSTATE\r\n\r\n${this.data.shiftstate.map(state =>
@@ -283,7 +241,9 @@ module.register('DotKLCParser', function (
               row.scancode,
               row.vk,
               row.sgcap ? 'SGCap' : row.capsflags,
-              ...row.chars.map(char => char.toString(4) + (char.isDead() ? '@' : ''))
+              ...row.chars.map(char => char instanceof OKLCUtils.Char
+                ? char.toString(4) + (char.isDead() ? '@' : '')
+                : char)
               ].join('\t')
 
               if (row.sgcap) {
@@ -292,7 +252,9 @@ module.register('DotKLCParser', function (
                   '-1',
                   '-1',
                   '0',
-                  ...row.sgchars.map(char => char.toString(4) + (char.isDead() ? '@' : ''))
+                  ...row.sgchars.map(char => char instanceof OKLCUtils.Char
+                    ? char.toString(4) + (char.isDead() ? '@' : '')
+                    : '')
                 ].join('\t')
               }
 
@@ -389,8 +351,51 @@ module.register('DotKLCParser', function (
         : ''
     }
 
+    verify () {
+      // throw new Error('Not yet implemented!')
+      const errors = []
+      if (this.data.name.length === 0) errors.push('Name must not be blank!')
+      if (this.data.name.length > 8)errors.push('Name must not be longer than 8 characters!')
+      if (this.data.name.includes(' ')) errors.push('Name must not include spaces!')
+      if (this.data.name.match(/[^\s\x20-\x7e]/)) errors.push('Name must be ascii!')
+      if (this.data.name[0] === '"') errors.push('First character of name cannot be a double quote!')
+
+      if (this.data.description.length === 0) errors.push('Description must not be blank!')
+      if (this.data.description.length > 233) errors.push('Description must not be longer than 233 characters!')
+      if (this.data.description[0] === '"') errors.push('First character of description cannot be a double quote!')
+
+      if (this.data.company.length === 0) errors.push('Company must not be blank!')
+      if (this.data.company.length > 233) errors.push('Company must not be longer than 255 characters!')
+      if (this.data.company[0] === '"') errors.push('First character of company cannot be a double quote!')
+
+      if (this.data.copyright.length > 233) errors.push('Copyright must not be longer than 255 characters!')
+      if (this.data.copyright[0] === '"') errors.push('First character of copyright cannot be a double quote!')
+
+      if (this.data.ligature.some(l => l.chars.reduce((acc, char) => acc + (char.toInt() > 0xffff ? 2 : 1), 0) > 4)) {
+        errors.push('Ligatures must not have more than 4 UTF-16 code points!')
+      }
+
+      if (Object.keys(this.data.deadkeys).some(char => Utils.hex(char) === 0)) {
+        errors.push('Dead keys combiners must not be null!')
+      }
+      if (Object.values(this.data.deadkeys).some(char => char.some(pair => pair[1].toInt() === 0))) {
+        errors.push('Dead keys base characters must not be null!')
+      }
+
+      if (!this.data.layout.find(row => row.vk === 'DECIMAL')) { errors.push('VK_DECIMAL must be defined!') }
+      if (!this.data.layout.find(row => row.vk === 'SPACE')) { errors.push('VK_SPACE must be defined!') }
+      if (this.data.layout.some((row, i, arr) => arr.findIndex(row2 => row.scancode === row2.scancode) !== i)) {
+        errors.push('Duplicate scancodes are not allowed!')
+      }
+
+      if (errors.length > 0) {
+        throw new Error('\n' + errors.join('\t\n'))
+      }
+    }
+
     static fromLayout (layout) {
       const instance = new KLC()
+      // instance.verify()
       return instance
     }
 
@@ -404,81 +409,19 @@ module.register('DotKLCParser', function (
         .split(new RegExp(`(?=${instance.keywords.join('|')})`))
         .map(section => section.split(/(?<=^\w+)\s/))
         .forEach(el => { instance[el[0]] = el[1].trim() })
+
+      // instance.verify()
       return instance
     }
 
     toString () {
+      this.verify()
       return [
         ...this.keywords
           .map(kw => this[`${kw}_STRING`])
           .filter(section => section.length),
         'ENDKBD'
       ].join('\r\n\r\n')
-      /* return [...this.keywords.map(kw => {
-        const val = this[kw]
-
-        // Strings can be immediately returned.
-        if (typeof val === 'string') return `${kw}\t${val}`
-
-        // Numbers are turned into strings.
-        if (typeof val === 'number') return `${kw}\t${val.toString(16).padStart(4, 0)}`
-
-        // Arrays get turned into tables.
-        // Rows are separated by newlines.
-        if (val instanceof Array) {
-          if (!val.length) return ''
-          return `${kw}\r\n\r\n${val
-            .map(row => {
-              // Strings and numbers idem ditto
-              if (typeof row === 'string') return row
-              if (typeof row === 'number') return row.toString(16).padStart(4, 0)
-
-              // Cols are separated by tabs.
-              if (row instanceof Array) {
-                return row
-                  .map(col => {
-                    // Strings and numbers idem ditto
-                    if (typeof col === 'string') return col
-                    if (typeof col === 'number') return col.toString(16).padStart(4, 0)
-
-                    // Chars need to be correctly marked as dead
-                    if (col instanceof OKLCUtils.Char) return col.toString(4) + (col.isDead() ? '@' : '')
-                  })
-                  .join('\t')
-              }
-
-              // Rows for layout table
-              let str = [
-                row.scancode.toString(16).padStart(2, 0),
-                row.vk,
-                row.sgcap || row.capsflags,
-                ...row.chars.map(char => char.toString(4) + (char.isDead() ? '@' : ''))
-              ].join('\t')
-
-              if (row.sgcap) {
-                str += '\r\n' + [
-                  '-1',
-                  '-1',
-                  '0',
-                  ...row.sgchars.map(char => char.toString(4) + (char.isDead() ? '@' : ''))
-                ].join('\t')
-              }
-
-              return str
-            })
-            .join('\r\n')}`
-        }
-
-        // Exclusive to dead keys, each of which is basically its own section
-        return Object.keys(val).map(key => {
-          return `${kw}\t${key}\r\n\r\n${val[key].map(row => row
-            .map(col => col.toString(4) + (col.isDead() ? '@' : ''))
-            .join('\t')
-          ).join('\r\n')}`
-        }).join('\r\n\r\n')
-      }),
-      'ENDKBD'
-      ].join('\r\n\r\n') */
     }
 
     toLayout () {

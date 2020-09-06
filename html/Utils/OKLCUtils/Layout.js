@@ -86,7 +86,7 @@ module.register('Layout', function (
       if (this.dead === undefined) this.dead = false
 
       if (this.char > 0xffff) throw new RangeError(`character code ${this.char} above 2-byte limit`)
-      // if (this.char < 0) throw new RangeError(`character code ${this.char} below 0`)
+      if (this.char < 0) throw new RangeError(`character code ${this.char} below 0`)
       if (isNaN(this.char)) throw new TypeError(`${char} is not a valid character value`)
       /* this.char = typeof char === 'string'
         ? char.length === 1
