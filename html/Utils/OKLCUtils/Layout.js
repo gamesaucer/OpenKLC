@@ -66,7 +66,7 @@ module.register('Layout', function (
   /**
    * Individual character
    */
-  module.Char = class Char {
+  /* module.Char = class Char {
     constructor (char, dead) {
       this.dead = dead
 
@@ -88,11 +88,6 @@ module.register('Layout', function (
       if (this.char > 0xffff) throw new RangeError(`character code ${this.char} above 2-byte limit`)
       if (this.char < 0) throw new RangeError(`character code ${this.char} below 0`)
       if (isNaN(this.char)) throw new TypeError(`${char} is not a valid character value`)
-      /* this.char = typeof char === 'string'
-        ? char.length === 1
-          ? char.codePointAt(0)
-          : Number(`0x${char.slice(0, 4)}`)
-        : char */
     }
 
     isDead () { return this.dead }
@@ -101,7 +96,7 @@ module.register('Layout', function (
 
     serialise () {}
     static deserialise () {}
-  }
+  } */
 
   /**
    * Char table entry for a virtual key

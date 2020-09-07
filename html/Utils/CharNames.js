@@ -1,7 +1,7 @@
 module.register('CharNames', function (module = window.Utils, Utils = window.Utils) {
-  module.getCharName = code => Utils.CharNames[code] || ''
+  module.getCharName = code => Utils.charNames[code] || ''
 
-  module.CharNames = {
+  module.charNames = {
     0x0000: 'NULL',
     0x0001: 'START OF HEADING',
     0x0002: 'START OF TEXT',

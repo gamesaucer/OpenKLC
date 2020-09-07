@@ -1,8 +1,9 @@
 module.register('DotKLCParser', function (
   module = window.DotKLCUtils,
   DotKLCUtils = window.DotKLCUtils,
-  OKLCUtils = window.OKLCUtils,
-  Utils = window.Utils
+  // OKLCUtils = window.OKLCUtils,
+  Utils = window.Utils,
+  DataUtils = window.DataUtils
 ) {
   const trimSpaceNQuote = str => str.replace(/^[ "]|[ "]$/g, '')
   const addOptionalQuotes = str => str.includes(' ') ? `"${str}"` : str
@@ -99,7 +100,7 @@ module.register('DotKLCParser', function (
         lineData.chars.push(...line.slice(3).map(field =>
           field === '-1' || field === '%%'
             ? field
-            : new OKLCUtils.Char(field)
+            : new DataUtils.Char(field)
         ))
 
         if (line[2] === 'SGCap') {
@@ -126,7 +127,7 @@ module.register('DotKLCParser', function (
         .map(line => ({
           vk: line[0],
           flags: line[1],
-          chars: line.slice(2).map(field => new OKLCUtils.Char(field, false))
+          chars: line.slice(2).map(field => new DataUtils.Char(field, false))
         }))
     }
 
@@ -180,12 +181,12 @@ module.register('DotKLCParser', function (
         .filter(line => line.length)
         .map(line => line.split(' '))
 
-      const key = new OKLCUtils.Char(lines.splice(0, 1)[0][0], false)
+      const key = new DataUtils.Char(lines.splice(0, 1)[0][0], false)
 
       const combos = lines.map(pair => {
         return [
-          new OKLCUtils.Char(pair[0], false),
-          new OKLCUtils.Char(pair[1])
+          new DataUtils.Char(pair[0], false),
+          new DataUtils.Char(pair[1])
         ]
       })
       this.data.deadkeys[key] = combos
@@ -229,7 +230,7 @@ module.register('DotKLCParser', function (
     get SHIFTSTATE_STRING () {
       return this.data.shiftstate.length
         ? `SHIFTSTATE\r\n\r\n${this.data.shiftstate.map(state =>
-            new OKLCUtils.Char(state).toString(1)).join('\r\n')}`
+            new DataUtils.Char(state).toString(1)).join('\r\n')}`
         : ''
     }
 
@@ -241,7 +242,7 @@ module.register('DotKLCParser', function (
               row.scancode,
               row.vk,
               row.sgcap ? 'SGCap' : row.capsflags,
-              ...row.chars.map(char => char instanceof OKLCUtils.Char
+              ...row.chars.map(char => char instanceof DataUtils.Char
                 ? char.toString(4) + (char.isDead() ? '@' : '')
                 : char)
               ].join('\t')
@@ -252,7 +253,7 @@ module.register('DotKLCParser', function (
                   '-1',
                   '-1',
                   '0',
-                  ...row.sgchars.map(char => char instanceof OKLCUtils.Char
+                  ...row.sgchars.map(char => char instanceof DataUtils.Char
                     ? char.toString(4) + (char.isDead() ? '@' : '')
                     : '')
                 ].join('\t')
@@ -289,7 +290,7 @@ module.register('DotKLCParser', function (
     get KEYNAME_STRING () {
       return this.data.keyname.length
         ? `KEYNAME\r\n\r\n${this.data.keyname.map(pair => `${
-            new OKLCUtils.Char(pair[0]).toString(2)
+            new DataUtils.Char(pair[0]).toString(2)
           }\t${
             addOptionalQuotes(pair[1])
           }`).join('\r\n')}`
@@ -299,7 +300,7 @@ module.register('DotKLCParser', function (
     get KEYNAME_EXT_STRING () {
       return this.data.keyname_ext.length
         ? `KEYNAME_EXT\r\n\r\n${this.data.keyname_ext.map(pair => `${
-            new OKLCUtils.Char(Utils.hex(pair[0])).toString(2)
+            new DataUtils.Char(Utils.hex(pair[0])).toString(2)
           }\t${
             addOptionalQuotes(pair[1])
           }`).join('\r\n')}`
@@ -309,7 +310,7 @@ module.register('DotKLCParser', function (
     get KEYNAME_DEAD_STRING () {
       return this.data.keyname_dead.length
         ? `KEYNAME_DEAD\r\n\r\n${this.data.keyname_dead.map(pair => `${
-            new OKLCUtils.Char(Utils.hex(pair[0])).toString(4)
+            new DataUtils.Char(Utils.hex(pair[0])).toString(4)
           }\t${
             addOptionalQuotes(pair[1])
           }`).join('\r\n')}`
@@ -320,7 +321,7 @@ module.register('DotKLCParser', function (
       return Object
         .entries(this.data.deadkeys)
         .map(pair => `DEADKEY\t${
-          new OKLCUtils.Char(Utils.hex(pair[0])).toString(4)
+          new DataUtils.Char(Utils.hex(pair[0])).toString(4)
         }\r\n\r\n${
           pair[1].map(pair2 => [
             ...pair2.map(char => char.toString(4)),
@@ -334,7 +335,7 @@ module.register('DotKLCParser', function (
     get DESCRIPTIONS_STRING () {
       return this.data.descriptions.length
         ? `DESCRIPTIONS\r\n\r\n${this.data.descriptions.map(pair => `${
-            new OKLCUtils.Char(Utils.hex(pair[0])).toString(4)
+            new DataUtils.Char(Utils.hex(pair[0])).toString(4)
           }\t${
             pair[1]
           }`).join('\r\n')}`
@@ -344,7 +345,7 @@ module.register('DotKLCParser', function (
     get LANGUAGENAMES_STRING () {
       return this.data.languagenames.length
         ? `LANGUAGENAMES\r\n\r\n${this.data.languagenames.map(pair => `${
-            new OKLCUtils.Char(Utils.hex(pair[0])).toString(4)
+            new DataUtils.Char(Utils.hex(pair[0])).toString(4)
           }\t${
             pair[1]
           }`).join('\r\n')}`
@@ -371,7 +372,7 @@ module.register('DotKLCParser', function (
       if (this.data.copyright.length > 233) errors.push('Copyright must not be longer than 255 characters!')
       if (this.data.copyright[0] === '"') errors.push('First character of copyright cannot be a double quote!')
 
-      if (this.data.ligature.some(l => l.chars.reduce((acc, char) => acc + (char.toInt() > 0xffff ? 2 : 1), 0) > 4)) {
+      if (this.data.ligature.some(l => l.chars.reduce((acc, char) => acc + char.codePointLength, 0) > 4)) {
         errors.push('Ligatures must not have more than 4 UTF-16 code points!')
       }
 
@@ -395,7 +396,6 @@ module.register('DotKLCParser', function (
 
     static fromLayout (layout) {
       const instance = new KLC()
-      // instance.verify()
       return instance
     }
 
@@ -409,8 +409,6 @@ module.register('DotKLCParser', function (
         .split(new RegExp(`(?=${instance.keywords.join('|')})`))
         .map(section => section.split(/(?<=^\w+)\s/))
         .forEach(el => { instance[el[0]] = el[1].trim() })
-
-      // instance.verify()
       return instance
     }
 
@@ -424,12 +422,12 @@ module.register('DotKLCParser', function (
       ].join('\r\n\r\n')
     }
 
-    toLayout () {
+    /* toLayout () {
       const instance = new OKLCUtils.Layout()
       return instance
-    }
+    } */
   }
 
   module.fromString = KLC.fromString
   module.fromLayout = KLC.fromLayout
-}, ['OKLCUtils', 'Utils', 'DotKLCUtils'])
+}, ['DataUtils', 'Utils', 'DotKLCUtils'])
