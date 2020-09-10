@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <title>Layout Editor</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <link rel='stylesheet' type='text/css' media='screen' href='layout.css'>
+</head>
+<body>
+  <div id='previewAspectWrapper'>
+    <div id='previewWrapper'>
+      <!--<div role='tablist' id='editablePreview' class='type1'></div>-->
+    </div>
+  </div>
+  <div>
+    <form id='keySettings'>
+      <input type='number' name='scancode'>
+      <input type='radio' name='scancodeDec'>
+      <input type='radio' name='scancodeHex'>
+      <input type='checkbox' name='sgcap'>
+      <table>
+        <tr>
+          <!--<td rowspan='2'><input type='checkbox' name='shiftIsCaps'></td>-->
+          <td>«Key»</td>
+          <td><select>
+            <option>None</option>
+            <option>Normal</option>
+            <option>Ligature</option>
+            <option>Dead</option>
+          </select></td>
+          <!--<td><input type='text' name='keyResult1'></td>
+          <td><input type='text' name='keyResult2'></td>
+          <td><input type='checkbox' name='keyDead'></td>
+          <td><button>...</button></td>-->
+        </tr>
+        <tr>
+          <td>SHIFT+«Key»</td>
+          <td><input type='text' name='keyResult1'></td>
+          <td><input type='text' name='keyResult2'></td>
+          <td><input type='checkbox' name='keyDead'></td>
+          <td><button>...</button></td>
+        </tr>
+        <tr>
+          <td>ALTGR+«Key»</td>
+          <td><input type='text' name='keyResult1'></td>
+          <td><input type='text' name='keyResult2'></td>
+          <td><input type='checkbox' name='keyDead'></td>
+          <td><button>...</button></td>
+        </tr>
+        <tr>
+          <td>SHIFT+ALTGR+«Key»</td>
+          <td><input type='text' name='keyResult1'></td>
+          <td><input type='text' name='keyResult2'></td>
+          <td><input type='checkbox' name='keyDead'></td>
+          <td><button>...</button></td>
+        </tr>
+        <tr>
+          <td>CTRL+«Key»</td>
+          <td><input type='text' name='keyResult1'></td>
+          <td><input type='text' name='keyResult2'></td>
+          <td><input type='checkbox' name='keyDead'></td>
+          <td><button>...</button></td>
+        </tr>
+        <tr>
+          <td>SHIFT+CTRL+«Key»</td>
+          <td><input type='text' name='keyResult1'></td>
+          <td><input type='text' name='keyResult2'></td>
+          <td><input type='checkbox' name='keyDead'></td>
+          <td><button>...</button></td>
+        </tr>
+        <tr>
+          <td>SGCAP+«Key»</td>
+          <td><input type='text' name='keyResult1'></td>
+          <td><input type='text' name='keyResult2'></td>
+          <td><input type='checkbox' name='keyDead'></td>
+          <td><button>...</button></td>
+        </tr>
+        <tr>
+          <td>SHIFT+SGCAP+«Key»</td>
+          <td><input type='text' name='keyResult1'></td>
+          <td><input type='text' name='keyResult2'></td>
+          <td><input type='checkbox' name='keyDead'></td>
+          <td><button>...</button></td>
+        </tr>
+      </table>
+    </form>
+  </div>
+  <script src='layout_.js'></script>
+</body>
+</html>
